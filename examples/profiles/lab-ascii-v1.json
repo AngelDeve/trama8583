@@ -1,0 +1,89 @@
+{
+  "schemaVersion": 1,
+  "id": "lab-ascii",
+  "version": "1.0.0",
+  "edition": "1987-style-laboratory",
+  "productionReady": false,
+  "framing": {
+    "kind": "external-payload"
+  },
+  "envelope": [],
+  "mti": {
+    "encoding": "ascii",
+    "length": 4
+  },
+  "bitmap": {
+    "encoding": "ascii-hex",
+    "blocks": [
+      64,
+      128
+    ],
+    "secondary": "when-needed",
+    "hexCase": "upper"
+  },
+  "fields": {
+    "3": {
+      "type": "numeric",
+      "encoding": "ascii",
+      "length": {
+        "kind": "fixed",
+        "size": 6,
+        "unit": "bytes"
+      },
+      "sensitive": false
+    },
+    "11": {
+      "type": "numeric",
+      "encoding": "ascii",
+      "length": {
+        "kind": "fixed",
+        "size": 6,
+        "unit": "bytes"
+      },
+      "sensitive": false
+    },
+    "41": {
+      "type": "text",
+      "encoding": "ascii",
+      "length": {
+        "kind": "fixed",
+        "size": 8,
+        "unit": "bytes"
+      },
+      "sensitive": false
+    },
+    "70": {
+      "type": "numeric",
+      "encoding": "ascii",
+      "length": {
+        "kind": "fixed",
+        "size": 3,
+        "unit": "bytes"
+      },
+      "sensitive": false
+    }
+  },
+  "rules": [
+    {
+      "id": "lab-financial-required",
+      "when": {
+        "mti": {
+          "in": [
+            "0200",
+            "0210"
+          ]
+        }
+      },
+      "required": [
+        3,
+        11,
+        41
+      ]
+    }
+  ],
+  "limits": {
+    "maxMessageBytes": 4096,
+    "maxFields": 127,
+    "maxDepth": 4
+  }
+}

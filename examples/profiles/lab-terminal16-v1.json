@@ -1,0 +1,33 @@
+{
+  "schemaVersion": 1,
+  "id": "lab-terminal16",
+  "version": "1.0.0",
+  "edition": "1987-style-laboratory",
+  "productionReady": false,
+  "extends": {
+    "id": "lab-ascii",
+    "version": "1.0.0"
+  },
+  "fields": {
+    "41": {
+      "type": "text",
+      "encoding": "ascii",
+      "length": {
+        "kind": "fixed",
+        "size": 16,
+        "unit": "bytes"
+      },
+      "sensitive": false
+    },
+    "54": {
+      "type": "numeric",
+      "encoding": "ascii",
+      "length": {
+        "kind": "fixed",
+        "size": 12,
+        "unit": "bytes"
+      },
+      "sensitive": false
+    }
+  }
+}
