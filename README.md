@@ -10,7 +10,6 @@ Biblioteca Java para construir, interpretar y validar mensajes ISO 8583 mediante
 | --- | --- |
 | `trama8583-nucleo` | Mensajes inmutables, perfiles y codec propio; solo JDK en ejecución. |
 | `trama8583-spring-integracion` | Dos `DirectChannel`, flujos de transformación y `PasarelaIso`. |
-| `trama8583-ejemplo-spring` | Demostración Spring Boot de solicitud y respuesta sintéticas. |
 | `trama8583-escenarios` | Catálogo autónomo de usos y errores esperados, ejecutable por consola y por JUnit. |
 
 Java 21, Maven Wrapper 3.9.11 y versiones Spring administradas con el BOM de Spring Boot 4.1.1. La biblioteca de integración puede usarse con Spring Framework sin Boot; la demostración utiliza Boot.
@@ -21,14 +20,20 @@ Configura `JAVA_HOME` para tu JDK 21 y ejecuta desde el repositorio:
 
 ```sh
 ./mvnw --batch-mode --no-transfer-progress verify
-"$JAVA_HOME/bin/java" -jar trama8583-ejemplo-spring/target/trama8583-ejemplo-spring-1.0-SNAPSHOT.jar
 ```
 
 En Windows utiliza `mvnw.cmd` y el ejecutable `java` de tu JDK 21. La primera compilación descarga Maven y dependencias. `./mvnw install` instala los módulos en tu repositorio Maven local; todavía no hay un artefacto publicado en Maven Central.
 
 En IntelliJ abre el `pom.xml` raíz, elige **JDK 21**, **Maven Wrapper** y **Project JDK** para el importador y ejecutor Maven. Los ajustes personales del IDE permanecen fuera de Git. GitHub Actions verifica el proyecto con Temurin 21.
 
-La suite JUnit reúne 406 casos del núcleo, canales Spring, arranque del ejemplo y catálogo ejecutable, con nombres en español. Consulta la [matriz de pruebas](docs/13-matriz-pruebas-junit.md) para ver el alcance, los comandos por módulo y los reportes.
+La suite JUnit reúne 405 casos del núcleo, canales Spring y catálogo ejecutable, con nombres en español. Consulta la [matriz de pruebas](docs/13-matriz-pruebas-junit.md) para ver el alcance, los comandos por módulo y los reportes.
+
+## Ejemplo Spring Boot con TCP
+
+El servidor de laboratorio vive en un repositorio independiente, consume la biblioteca desde Maven y escucha en `127.0.0.1:9000` con la configuración inicial. [Ejemplo Spring Boot con TCP](https://github.com/AngelDeve/trama8583-ejemplo-spring-tcp)
+
+- En el Inspector, usa **Ejemplo Spring Boot · TCP** para construir y enviar mensajes manuales. [Inspector](https://github.com/AngelDeve/trama8583-inspector)
+- En el Banco de pruebas, abre **Servidor TCP** para comprobar los intercambios `0200 → 0210` y `0800 → 0810`. [Banco de pruebas](https://github.com/AngelDeve/trama8583-banco-pruebas)
 
 ## Escenarios para aprender y validar cambios
 
@@ -86,7 +91,7 @@ byte[] trama = pasarela.construir(solicitud);
 MensajeIso recibido = pasarela.interpretar(trama);
 ```
 
-Los canales `trama8583.codificacion` y `trama8583.decodificacion` aceptan mensajes Spring con payload `MensajeIso` y `byte[]`, respectivamente. La pasarela gestiona la respuesta. Los flujos conservan cabeceras de aplicación y se ejecutan en el hilo del llamador. Consulta la [guía de integración](docs/12-integracion-spring.md) y el [ejemplo ejecutable](trama8583-ejemplo-spring/src/main/java/org/gca/trama8583/ejemplo/AplicacionTrama8583.java).
+Los canales `trama8583.codificacion` y `trama8583.decodificacion` aceptan mensajes Spring con payload `MensajeIso` y `byte[]`, respectivamente. La pasarela gestiona la respuesta. Los flujos conservan cabeceras de aplicación y se ejecutan en el hilo del llamador. Consulta la [guía de integración](docs/12-integracion-spring.md).
 
 ## Capacidades actuales
 
@@ -99,7 +104,7 @@ Los canales `trama8583.codificacion` y `trama8583.decodificacion` aceptan mensaj
 
 El codec rechaza campos desconocidos, codificaciones inválidas, longitudes incompatibles, truncamientos y bytes sobrantes. No agrega relleno ni recupera una trama adivinando límites.
 
-Pendientes: cargador JSON/YAML, BCD, EBCDIC, bitmap terciario, subcampos/TLV, reglas entre campos, TCP, correlación transaccional y PIN/MAC/HSM. El campo 65 solo se representa como dato definido explícitamente en este subconjunto; un protocolo que lo use para anunciar otro bitmap requiere una extensión. Los [JSON de laboratorio](examples/profiles/lab-ascii-v1.json) siguen siendo ejemplos de diseño y no se cargan en ejecución.
+El transporte TCP del laboratorio pertenece a la aplicación de ejemplo. Para el núcleo siguen pendientes el cargador JSON/YAML, BCD, EBCDIC, bitmap terciario, subcampos/TLV, reglas entre campos, correlación transaccional y PIN/MAC/HSM. El campo 65 se representa como dato definido explícitamente en este subconjunto. Un protocolo que lo use para anunciar otro bitmap requiere una extensión. Los [JSON de laboratorio](examples/profiles/lab-ascii-v1.json) siguen siendo ejemplos de diseño y no se cargan en ejecución.
 
 ## Documentación y contribuciones
 

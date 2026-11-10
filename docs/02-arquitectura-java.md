@@ -27,7 +27,7 @@ El núcleo devuelve diagnósticos y no requiere SLF4J ni un backend de logging. 
 | iso8583-profile-json | Cargador opcional futuro; puede incorporar dependencias sólo para quien lo use |
 | iso8583-cli | Inspección local posterior al MVP, con salida redactada |
 
-El primer artefacto `trama8583-nucleo` concentra el modelo, perfiles y codec. Por solicitud del mantenedor se añadieron `trama8583-spring-integracion` y `trama8583-ejemplo-spring`; el núcleo no depende de ellos. Los nombres de la tabla son propuestas anteriores para ampliaciones. Las extensiones de campo se registrarán programáticamente mediante interfaces propias.
+El artefacto `trama8583-nucleo` concentra el modelo, perfiles y codec. El mismo repositorio contiene `trama8583-spring-integracion` y `trama8583-escenarios`. La aplicación [Spring Boot con TCP](https://github.com/AngelDeve/trama8583-ejemplo-spring-tcp) vive aparte y consume los artefactos de la biblioteca. Los nombres de la tabla son propuestas anteriores para ampliaciones. Las extensiones de campo se registrarán programáticamente mediante interfaces propias.
 
 ## Flujo de procesamiento
 

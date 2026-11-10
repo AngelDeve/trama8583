@@ -99,4 +99,10 @@ Para agregar un caso:
 
 `./mvnw verify` desde la raíz ejecuta las pruebas técnicas existentes y este catálogo. GitHub Actions también ejecuta el JAR después de empaquetarlo, para comprobar la distribución autónoma. Los reportes JUnit quedan en `trama8583-escenarios/target/surefire-reports/`, con ID y título de cada escenario.
 
-Al cambiar deliberadamente un contrato público, revisa el escenario y su vector esperado junto con la implementación. Estos ejemplos cubren el subconjunto implementado; no certifican una red ni prueban funcionalidades pendientes como BCD, TCP o PIN/MAC/HSM.
+Al cambiar deliberadamente un contrato público, revisa el escenario y su vector esperado junto con la implementación. Estos ejemplos cubren el subconjunto de laboratorio.
+
+## Escenarios contra el servidor TCP
+
+`EscenariosTcp` conserva los vectores y comprobaciones de extremo a extremo dentro de la biblioteca. El **Banco de pruebas** los ejecuta desde **Servidor TCP** contra el [ejemplo Spring Boot](https://github.com/AngelDeve/trama8583-ejemplo-spring-tcp) en ejecución.
+
+El escenario financiero prueba `0200 → 0210` y el de red `0800 → 0810`. Ambos verifican byte a byte la respuesta, incluido el prefijo de longitud de dos bytes big endian y el campo 39 con valor sintético `00`. El catálogo autónomo de 30 escenarios y la carga de estrés siguen ejecutándose por separado.

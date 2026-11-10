@@ -1,6 +1,6 @@
 # Matriz de escenarios JUnit
 
-La suite usa JUnit Jupiter 6.0.3 y pruebas parametrizadas y dinámicas con nombres en español. Verificación del 15 de octubre de 2026: **406 casos**, sin fallos, errores ni pruebas omitidas. Son 337 pruebas del núcleo, 20 de integración Spring, 1 de la aplicación de ejemplo y 48 del módulo de escenarios. Estas últimas incluyen 30 recetas ejecutables, una comprobación de integridad del catálogo, cuatro pruebas del ejecutor y 13 comprobaciones de cargas, mediciones e histograma. Cada combinación parametrizada o escenario dinámico cuenta como un caso; las pruebas de concurrencia y entradas aleatorias realizan además varias operaciones dentro de su caso.
+La suite usa JUnit Jupiter 6.0.3 y pruebas parametrizadas y dinámicas con nombres en español. La biblioteca reúne **405 casos**. Son 337 pruebas del núcleo, 20 de integración Spring y 48 del módulo de escenarios. Estas últimas incluyen 30 recetas ejecutables, una comprobación de integridad del catálogo, cuatro pruebas del ejecutor y 13 comprobaciones de cargas, mediciones e histograma. Cada combinación parametrizada o escenario dinámico cuenta como un caso. Las pruebas de concurrencia y entradas aleatorias realizan varias operaciones dentro de su caso.
 
 ## Escenarios del núcleo
 
@@ -21,7 +21,7 @@ La suite usa JUnit Jupiter 6.0.3 y pruebas parametrizadas y dinámicas con nombr
 
 Los bytes esperados se construyen a partir de literales, segmentos y contenido sintético definido en las pruebas; no se obtienen llamando al codec bajo prueba. Las comprobaciones de ida y vuelta complementan esos resultados independientes.
 
-## Integración y ejemplo
+## Integración Spring
 
 | Familia | Escenarios verificados | Suite |
 | --- | --- | --- |
@@ -30,9 +30,8 @@ Los bytes esperados se construyen a partir de literales, segmentos y contenido s
 | Canales reales | Cabeceras de aplicación conservadas, mensaje original intacto, payload incompatible rechazado, codec ejecutado en el hilo del llamador | Ambas suites Spring |
 | Configuración | Fallo cuando falta el perfil o hay dos perfiles sin selección explícita | `CanalesEscenariosTest` |
 | Concurrencia | 100 llamadas desde cuatro hilos sin cruzar folios; tiempo máximo de la ejecución concurrente acotado para detectar bloqueos | `IntegracionIsoTest` |
-| Spring Boot | Arranque real, ejecución del ejemplo, respuesta sintética de 42 bytes procesada y contexto cerrado | `AplicacionTrama8583Test` |
 
-Las pruebas del núcleo son unitarias y no abren Spring. Las de canales usan un contexto Spring real para comprobar el contrato del framework; la del ejemplo es una prueba de arranque Boot. No necesitan red, HSM, base de datos ni documentación privada. JUnit es una dependencia con alcance `test` en cada módulo.
+Las pruebas del núcleo son unitarias. Las de canales usan un contexto Spring real para comprobar el contrato del framework. JUnit es una dependencia con alcance `test` en cada módulo. Las pruebas de arranque y socket local pertenecen al [ejemplo Spring Boot con TCP](https://github.com/AngelDeve/trama8583-ejemplo-spring-tcp).
 
 ## Escenarios de uso autónomos
 
@@ -66,4 +65,4 @@ En IntelliJ puedes ejecutar una clase o escenario desde `src/test/java`, con JDK
 
 ## Alcance pendiente
 
-La matriz verifica el contrato implementado. BCD, EBCDIC, cargadores JSON/YAML, tercer bitmap, reglas compuestas/TLV, TCP y PIN/MAC/HSM no existen todavía y necesitarán sus propios escenarios al incorporarse. Los casos binarios de campo 65 se limitan a datos explícitos del perfil de laboratorio; no prueban un tercer bitmap. Los vectores sintéticos no certifican compatibilidad con una red ni sustituyen una comparación externa con un perfil equivalente.
+La matriz verifica el contrato implementado. BCD, EBCDIC, cargadores JSON/YAML, tercer bitmap, reglas compuestas/TLV y PIN/MAC/HSM requerirán sus propios escenarios al incorporarse al núcleo. Los casos binarios de campo 65 se limitan a datos explícitos del perfil de laboratorio. Los vectores sintéticos no certifican compatibilidad con una red ni sustituyen una comparación externa con un perfil equivalente.
