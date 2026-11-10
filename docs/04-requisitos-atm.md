@@ -1,53 +1,45 @@
-# Requisitos generalizados para mensajería ATM
+# Variaciones de mensajería y escenarios de laboratorio
 
-## Uso del caso de estudio
+Los ejemplos de este proyecto usan perfiles, valores y gramáticas sintéticos para mostrar posibilidades de configuración. No representan el contrato de una red. El perfil de cada integración debe definir de forma explícita sus formatos y reglas.
 
-La guía de ocho páginas aportada es un resumen de estudio de una interfaz de emisor. No contiene el manual completo, su revisión contractual ni todas las gramáticas. Se utiliza para detectar capacidades necesarias y preguntas de validación. El proyecto público no incluirá el nombre de la contraparte ni presentará un perfil de laboratorio como perfil certificado.
+## Capacidades y ejemplos
 
-Cambiar un nombre no concede permiso para publicar un manual, sus tablas o un perfil derivado. El perfil real debe mantenerse bajo control del integrador hasta aclarar sus derechos de distribución.
-
-## Capacidades requeridas
-
-| ID | Capacidad del componente | Origen en la guía | Estado |
+| ID | Capacidad | Ejemplo ejecutable | Capa que lo resuelve |
 | --- | --- | --- | --- |
-| ATM-01 | Literal opcional antes de cabecera y MTI | Páginas 1 y 3 | Diseño general; bytes reales por confirmar |
-| ATM-02 | Cabecera segmentada y versionada | Páginas 3 y 4 | Necesita catálogo de códigos autorizado |
-| ATM-03 | Bitmap hexadecimal y bloque secundario configurable | Páginas 3, 4 y 6 | Implementable con vectores sintéticos |
-| ATM-04 | Longitud fija de terminal sobrescribible por perfil | Páginas 1 y 4 | Ejemplo sintético de cambio 8 a 16 |
-| ATM-05 | Campo de montos configurable como fijo o variable | Páginas 1 y 4 | Sin imponer una forma global |
-| ATM-06 | Presencia por MTI, operación y resultado | Página 4 | Condiciones completas pendientes |
-| ATM-07 | Campos de cuentas de origen y destino | Páginas 1 y 4 | Prefijos y máximos pendientes |
-| ATM-08 | Comparación entre solicitud y respuesta | Páginas 1 y 8 | Regla de eco configurable; contenido sensible |
-| ATM-09 | Compuestos con indicadores internos de longitud | Página 5 | Gramática y conteo pendientes |
-| ATM-10 | Tokens con validación y bytes opacos | Página 5 | Falta formato, ubicación y longitud |
-| ATM-11 | Mensajes de rechazo y códigos de cabecera separados de negocio | Página 3 | Ejemplos inconsistentes; no automatizar |
-| ATM-12 | Representación de reversos, red y mensajes financieros | Páginas 2 a 4 | Sin ejecutar tiempos o reintentos en el codec |
+| ATM-01 | Prefijo constante antes de cabecera y MTI | NUC-06, ESP-01 | Codec y perfil |
+| ATM-02 | Cabecera opaca con versión y estado independientes del cuerpo | ESP-01 | Transporte por el codec; interpretación por la aplicación |
+| ATM-03 | Bitmap hexadecimal o binario y secundario opcional u obligatorio | NUC-04, NUC-05, NUC-08 | Codec y perfil |
+| ATM-04 | Terminal de distinta longitud según perfil | NUC-07 | Reemplazo explícito de definición |
+| ATM-05 | Monto fijo o variable; signo como texto configurado | ESP-02 | Codec para representación; aplicación para semántica monetaria |
+| ATM-06 | Presencia condicionada por operación y resultado | ESP-05 | Regla de ejemplo en la aplicación |
+| ATM-07 | Referencias ficticias de origen y destino con prefijos separados | ESP-03 | Campos LLVAR del perfil |
+| ATM-08 | Eco de folio y terminal entre solicitud y respuesta | ESP-04 | Regla de ejemplo con contexto explícito |
+| ATM-09 | Contenedor con prefijo externo y longitudes internas diferentes | ESP-06, ESP-08 | Campo del codec y parser de ejemplo en la aplicación |
+| ATM-10 | Tokens desconocidos conservados como bytes opacos | ESP-07 | Campo binario y contenedor de ejemplo |
+| ATM-11 | Estado del sobre separado del resultado del cuerpo | ESP-01 | Interpretación de la aplicación |
+| ATM-12 | Mensajes financieros, de reverso y de red | NUC-01, NUC-02, ESP-09, ESP-10 | Modelo y codec; ciclos de vida fuera del núcleo |
 
-Las referencias a páginas permiten revisar la guía local. No acreditan que sus afirmaciones sean normativas.
+Consulta el [catálogo ejecutable](../trama8583-escenarios/README.md). La familia ESP registra estas variaciones como Dado / Cuando / Entonces. Las reglas y el contenedor viven únicamente en el módulo de ejemplos; el núcleo todavía no ofrece un motor de reglas entre campos ni un parser genérico de compuestos.
 
-## Ambigüedades que bloquean un perfil de producción
+## Decisiones que cada perfil debe fijar
 
-| Hallazgo | Consecuencia | Confirmación requerida |
-| --- | --- | --- |
-| MTI de cuatro dígitos junto a un ejemplo de rechazo de cinco | Desplazamiento de bitmap si se codifica literalmente | Transformación exacta, con vector aprobado; no corregir por conjetura |
-| Indicador interno de dos posiciones descrito con un valor de tres dígitos | No se sabe dónde comienza el siguiente subcampo | Distinguir prefijo externo, longitud interna y contenido |
-| Tipo numérico que también admite signo menos | Un validador de dígitos rechazaría mensajes previstos | Longitud del signo, posición y representación positiva |
-| Códigos de estado concatenados y referencias de nota mezcladas | Catálogo ambiguo | Tabla original legible y revisión vigente |
-| Campos variables sin máximo ni prefijo completo | No hay límites fiables para decodificar | Encoding, unidad, máximo y gramática por campo |
-| Texto especial de reverso con distinta cantidad de asteriscos | No se conoce la representación de 40 posiciones | Bytes exactos y política de espacios |
-| Campos de control criptográfico sin cobertura de MAC | Es imposible verificar autenticidad | Algoritmo, bytes cubiertos, encoding y vectores HSM |
-| Tokens descritos sólo por finalidad | No se puede decodificar ni construir respuesta EMV | Contenedor, versión, tags, delimitadores, orden y obligatoriedad |
+- Orden y longitud de cada segmento del sobre; significado de su versión y estado.
+- Tipo de dato y codificación de cada campo, máximo y unidad de longitud.
+- Si un prefijo interno cuenta el valor, la cabecera interna o el contenedor completo.
+- Presencia por MTI y condiciones de operación o resultado; campos que deben conservarse entre mensajes.
+- Política explícita de signo, ceros y espacios. El codec no completa datos ni deduce formatos.
+- Gramática de contenedores, límites, duplicados y conservación de elementos opacos.
 
-La descripción genérica de LLVAR no permite concluir que todos los campos variables de esta interfaz usen ese formato. Las marcas condicionales necesitan predicados completos; una celda vacía tampoco debe convertirse automáticamente en prohibición sin confirmar el manual.
+Un dato que no cumpla el perfil debe rechazarse con un diagnóstico controlado. Las variantes se configuran de forma explícita; no se prueban formatos alternativos hasta encontrar uno que parezca válido.
 
-## Información a pedir al integrador
+## Límites de los ejemplos
 
-Solicitar manual autorizado y revisión, tabla completa de formatos y condiciones, envelope y framing, restricciones de charset, reglas de reversos y rechazo, vectores sintéticos válidos e inválidos con bytes esperados y protocolo de certificación. Para compuestos, pedir ejemplos de fronteras y prefijos, no sólo un listado de nombres.
+Los identificadores de cuenta son ficticios. Los montos se conservan como cadenas; moneda, exponente y reglas de negocio pertenecen a la aplicación. Los campos binarios no realizan operaciones criptográficas.
 
-Los límites de respuesta y reenvío descritos en la guía serán parámetros de la aplicación. Debe aclararse desde qué evento se mide cada plazo, qué ocurre con duplicados y respuestas tardías, y cómo se correlacionan mensajes. STAN o RRN aislados no se tratarán como claves universalmente únicas.
+La gramática AA/BB/ZZ es inventada: etiqueta ASCII de dos bytes, longitud decimal ASCII de dos bytes y valor opaco. No implementa un estándar de tokens ni un protocolo de red. Sirve para comprobar delimitación, conservación de bytes y rechazo de longitudes inconsistentes.
 
-## Seguridad del diseño
+El ejemplo de reversos demuestra representación de mensajes y relleno explícito. Temporizadores, reintentos, duplicados y correlación son responsabilidades de la aplicación.
 
-El codec transportará bloques PIN, MAC y datos criptográficos como bytes o representaciones explícitas. No almacenará claves ni implementará el esquema criptográfico resumido en la guía. La integración HSM definirá por separado operaciones, formatos de bloques y gestión de claves conforme al contrato vigente.
+## Medición
 
-Los mensajes, errores y `toString` deben redactar por defecto contenido sensible. No registrar tramas completas, tracks, PIN, claves ni valores de cuentas. Los campos privados sin clasificación se consideran sensibles. Se usarán únicamente datos sintéticos en ejemplos y pruebas públicas. Los límites de parsing se aplicarán antes de reservar memoria; se prohibirán entidades XML externas si el motor las utiliza para configuración.
+La [guía de estrés](15-pruebas-estres.md) automatiza cargas básicas, especiales, voluminosas, negativas, mixtas y Spring. Las mediciones incluyen comprobación de resultados, entorno de ejecución y reportes comparables por carga y número de hilos.

@@ -1,5 +1,7 @@
 # Plan de implementación y criterios de aceptación
 
+Avance al 15 de octubre de 2026: primer codec y modelo inmutables, tres vectores de laboratorio, bitmap ASCII/binario, FIJA/LLVAR/LLLVAR, sobre y adaptación Spring implementados. La suite ampliada tiene 337 casos del núcleo, 20 de integración, 1 de arranque Boot y 48 del catálogo y herramientas de carga, todos exitosos. El catálogo incluye 30 escenarios autónomos y existen automatizaciones de carga concurrente con reportes JSON/CSV. El ejemplo termina correctamente y `jdeps` confirma únicamente `java.base` en el núcleo. La [matriz JUnit](13-matriz-pruebas-junit.md) detalla los escenarios. La comparación externa, herencia y hash de perfiles, codificaciones adicionales, reglas compuestas y publicación siguen pendientes. Véase el [alcance ejecutable](12-integracion-spring.md).
+
 ## Hito 1 Corte vertical del motor propio
 
 Crear el artefacto Java 21 y un corte del codec con MTI ASCII, bitmap ASCII hex de 64/128 bits, campos fijos, LLVAR ASCII y sobre configurable. Verificar los vectores existentes y añadir casos de fronteras y truncamiento. Comparar subconjuntos equivalentes con una implementación externa, sin incorporarla al runtime.
@@ -49,8 +51,8 @@ Publicar el primer JAR sólo después de verificar que no contiene documentos, n
 
 Pruebas de propiedades: `decode(encode(m))` conserva valores lógicos para mensajes válidos. `encode(decode(bytes))` conserva bytes sólo en formatos canónicos declarados. Mutar bitmap y prefijos y truncar cada offset debe devolver error controlado. Comparar con otro motor requiere perfiles idénticos, no simplemente el mismo nombre de edición.
 
-Las métricas de rendimiento se medirán después: mensajes por segundo, percentiles de latencia, bytes reservados por operación y tamaños de payload, indicando JVM, hardware y perfil. No se promete throughput sin medición.
+La herramienta de carga instrumentada y sus automatizaciones se describen en la [guía de estrés](15-pruebas-estres.md). Mide throughput de operaciones verificadas, percentiles aproximados, snapshots de heap y actividad de GC. Una medición de asignaciones por operación y los microbenchmarks aislados siguen pendientes. Las métricas que deben contextualizarse incluyen: mensajes por segundo, percentiles de latencia, bytes reservados por operación y tamaños de payload, indicando JVM, hardware y perfil. No se promete throughput sin medición.
 
 ## Decisiones antes de programar
 
-Java queda seleccionado y Apache 2.0 es la licencia objetivo. El mantenedor aceptó el motor propio sin dependencias de ejecución el 9 de octubre de 2026. Falta comprobar el corte vertical, formalizar la licencia y preparar la publicación de Trama8583. La falta de manuales recientes, definiciones de mantenimiento, gramáticas privadas o HSM no bloquea el núcleo configurable. Esos recursos sólo se pedirán para una integración o capacidad específica que los necesite.
+Java 21 queda seleccionado y Apache 2.0 es la licencia objetivo. El mantenedor aceptó el motor propio sin dependencias de ejecución el 9 de octubre de 2026. El corte inicial ya está verificado con datos sintéticos; falta compararlo externamente, formalizar la licencia y preparar la publicación de Trama8583. La falta de manuales recientes, definiciones de mantenimiento, gramáticas privadas o HSM no bloquea el núcleo configurable. Esos recursos sólo se pedirán para una integración o capacidad específica que los necesite.

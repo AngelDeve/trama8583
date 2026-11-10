@@ -1,5 +1,7 @@
 # Arquitectura Java y selección del motor
 
+Este documento conserva el diseño objetivo. La primera implementación y sus contratos concretos se describen en la [guía Spring](12-integracion-spring.md); no todas las capacidades propuestas aquí existen todavía.
+
 ## Decisión aceptada
 
 Se implementará un motor propio Java con cero dependencias externas de ejecución en el núcleo y Apache 2.0 como licencia objetivo. El alcance inicial seguirá limitado al codec configurable; no incluye infraestructura transaccional ni criptografía. La [evaluación comparativa](09-evaluacion-motor-propio.md) desarrolla beneficios, costes y condiciones de esta elección.
@@ -10,7 +12,7 @@ Los motores existentes podrán servir como comparadores externos de vectores equ
 
 ## JDK y herramientas
 
-Se propone Java 21 y Maven wrapper. El núcleo utilizará sólo APIs del JDK y podrá limitarse al módulo `java.base`. Arrays, colecciones, `ByteBuffer` y `Charset` cubren las utilidades generales; el cursor acotado, bitmap, BCD y prefijos ISO se implementarán como primitivas propias. Cada página de códigos adicional se comprobará en la JVM soportada.
+Se utiliza Java 21 y Maven Wrapper 3.9.11. El primer JAR del núcleo depende únicamente de `java.base`, comprobado con `jdeps`. Arrays, colecciones, `ByteBuffer` y `Charset` cubren utilidades generales; cursor, bitmap y prefijos ISO se implementan como primitivas propias. BCD y páginas de códigos adicionales requieren implementación y vectores propios.
 
 JUnit, herramientas de propiedades y JMH podrán usarse únicamente en test o desarrollo. No serán dependencias del consumidor. La configuración inicial será mediante builder Java; cargar JSON con una biblioteca existente será una opción posterior en un artefacto independiente. No desarrollar un parser JSON genérico para evitar esa dependencia opcional.
 
@@ -25,7 +27,7 @@ El núcleo devuelve diagnósticos y no requiere SLF4J ni un backend de logging. 
 | iso8583-profile-json | Cargador opcional futuro; puede incorporar dependencias sólo para quien lo use |
 | iso8583-cli | Inspección local posterior al MVP, con salida redactada |
 
-Empezar con un único artefacto de runtime evita repartir prematuramente la API entre módulos. Ningún módulo opcional debe ser dependencia transitiva del núcleo. Las extensiones de campo se registrarán programáticamente mediante interfaces propias.
+El primer artefacto `trama8583-nucleo` concentra el modelo, perfiles y codec. Por solicitud del mantenedor se añadieron `trama8583-spring-integracion` y `trama8583-ejemplo-spring`; el núcleo no depende de ellos. Los nombres de la tabla son propuestas anteriores para ampliaciones. Las extensiones de campo se registrarán programáticamente mediante interfaces propias.
 
 ## Flujo de procesamiento
 
@@ -43,7 +45,7 @@ ResultadoValidacion validacion = validador.validar(resultado.mensaje(), contexto
 byte[] salida = codec.codificar(mensaje, OpcionesCodificacion.canonicas());
 ```
 
-Estas clases aún no existen. La API propia usará nombres en español según el [requisito de tropicalización](11-espanol-latinoamerica.md). `MensajeIso` contendrá MTI como cadena, sobre y mapa ordenado de campos. `ValorCampo` distinguirá texto, bytes y compuesto. Perfil y mensaje serán inmutables, con copias defensivas de arrays. Los codecs compartidos serán seguros para concurrencia; los cursores y buffers mutables pertenecerán a cada operación.
+La secuencia anterior sigue siendo una propuesta: no existen `PerfilCompilado`, catálogo `codecs`, opciones ni resultados especializados. La API inicial ya tiene `PerfilMensaje`, `MensajeIso`, `ValorTexto`, `ValorBinario` y `CodecIsoBasico`, en español según el [requisito de tropicalización](11-espanol-latinoamerica.md). Perfil y mensaje son inmutables, con copias defensivas; cursores y buffers pertenecen a cada operación. Los compuestos permanecen pendientes.
 
 `ResultadoDecodificacion` incluirá bytes consumidos, perfil y versión efectiva, campos y diagnósticos. Un error contendrá código estable, ruta de campo, posición y longitud esperada/disponible, sin contenido. El catálogo definitivo separará los códigos programáticos del texto del diagnóstico, que estará en español.
 

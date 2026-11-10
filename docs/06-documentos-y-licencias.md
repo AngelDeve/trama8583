@@ -30,7 +30,7 @@ La primera implementación se orienta a mensajes de estilo 1987. Una futura comp
 
 Guardar normas y manuales en una carpeta externa al checkout, con acceso acorde con su licencia. El repositorio contendrá sólo documentación original, ejemplos sintéticos y perfiles con derechos de publicación. No guardar documentos restringidos en recursos del JAR, fixtures, adjuntos de issues o artefactos de CI.
 
-Como defensa adicional, `.gitignore` excluye carpetas locales designadas para material privado. No constituye un control de acceso y no protege archivos que ya estén versionados. Antes de publicar, revisar también recursos empaquetados y archivos de configuración. No se copió el PDF aportado al proyecto.
+Como defensa adicional, `.gitignore` excluye carpetas locales designadas para material privado. No constituye un control de acceso y no protege archivos que ya estén versionados. Antes de publicar, revisar también recursos empaquetados y archivos de configuración.
 
 ## Cuándo pedir información adicional
 

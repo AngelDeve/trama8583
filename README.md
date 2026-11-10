@@ -1,51 +1,112 @@
 # Trama8583
 
-Biblioteca Java para construir, interpretar y validar mensajes ISO 8583 mediante perfiles configurables. Núcleo propio sin dependencias externas de ejecución, pensado para desarrolladores de Latinoamérica.
+Biblioteca Java para construir, interpretar y validar mensajes ISO 8583 mediante perfiles explícitos. Núcleo propio sin dependencias externas de ejecución, con canales de Spring Integration y una API de alto nivel en español para Latinoamérica.
 
-> **Estado: preparación del proyecto.** Este repositorio contiene la definición inicial del componente; todavía no incluye una implementación ejecutable ni una versión publicada.
+**Estado: primera implementación de laboratorio, sin versión publicada.** El codec procesa un subconjunto de mensajes de estilo 1987. Los perfiles y vectores son sintéticos; la compatibilidad con una red o una edición completa requiere evidencia y pruebas específicas. “Universal” significa extensible mediante perfiles, sin detección automática del formato.
 
-## Propósito
+## Módulos
 
-Ofrecer una API clara para trabajar con la estructura de un mensaje: indicador de tipo de mensaje (MTI), bitmap y campos de datos. El formato de cada campo deberá definirse mediante un perfil de mensajería explícito.
+| Módulo | Función |
+| --- | --- |
+| `trama8583-nucleo` | Mensajes inmutables, perfiles y codec propio; solo JDK en ejecución. |
+| `trama8583-spring-integracion` | Dos `DirectChannel`, flujos de transformación y `PasarelaIso`. |
+| `trama8583-ejemplo-spring` | Demostración Spring Boot de solicitud y respuesta sintéticas. |
+| `trama8583-escenarios` | Catálogo autónomo de usos y errores esperados, ejecutable por consola y por JUnit. |
 
-El idioma principal será español para Latinoamérica: documentación, Javadoc, ejemplos, API propia, código interno y diagnósticos, en la medida que permitan Java y los protocolos. Las particularidades regionales se configurarán por perfil. Véase el [requisito de tropicalización](docs/11-espanol-latinoamerica.md).
+Java 21, Maven Wrapper 3.9.11 y versiones Spring administradas con el BOM de Spring Boot 4.1.1. La biblioteca de integración puede usarse con Spring Framework sin Boot; la demostración utiliza Boot.
 
-## Alcance previsto
+## Compilar y ejecutar
 
-- Representar mensajes y campos mediante una API Java.
-- Codificar y decodificar mensajes según un perfil configurado.
-- Validar campos obligatorios, longitudes y formatos.
-- Informar errores de lectura y validación con contexto útil.
-- Incluir ejemplos reproducibles y pruebas con datos sintéticos.
+Configura `JAVA_HOME` para tu JDK 21 y ejecuta desde el repositorio:
 
-Estas capacidades son objetivos de desarrollo, no funcionalidades disponibles actualmente. La primera versión deberá documentar la edición de ISO 8583, las codificaciones y el perfil de campos que admite.
+```sh
+./mvnw --batch-mode --no-transfer-progress verify
+"$JAVA_HOME/bin/java" -jar trama8583-ejemplo-spring/target/trama8583-ejemplo-spring-1.0-SNAPSHOT.jar
+```
 
-## Límites del componente
+En Windows utiliza `mvnw.cmd` y el ejecutable `java` de tu JDK 21. La primera compilación descarga Maven y dependencias. `./mvnw install` instala los módulos en tu repositorio Maven local; todavía no hay un artefacto publicado en Maven Central.
 
-El proyecto se centra en el procesamiento de mensajes. La conectividad de red, el enrutamiento transaccional, la autorización de operaciones y la gestión de claves criptográficas quedan fuera del alcance inicial.
+En IntelliJ abre el `pom.xml` raíz, elige **JDK 21**, **Maven Wrapper** y **Project JDK** para el importador y ejecutor Maven. Los ajustes personales del IDE permanecen fuera de Git. GitHub Actions verifica el proyecto con Temurin 21.
 
-## Uso y compilación
+La suite JUnit reúne 406 casos del núcleo, canales Spring, arranque del ejemplo y catálogo ejecutable, con nombres en español. Consulta la [matriz de pruebas](docs/13-matriz-pruebas-junit.md) para ver el alcance, los comandos por módulo y los reportes.
 
-El proyecto contiene una estructura Maven creada en IntelliJ IDEA y todavía no implementa el procesamiento de mensajes. El POM actual configura Java 27 y codificación UTF-8. Las instrucciones de uso se incorporarán con el primer codec; aún no hay una versión publicada. La documentación de diseño propone Java 21: la versión mínima definitiva se acordará antes de implementar el núcleo.
+## Escenarios para aprender y validar cambios
 
-## Hoja de ruta
+El [catálogo de escenarios ejecutables](trama8583-escenarios/README.md) incluye 30 recetas independientes con **Dado / Cuando / Entonces**: solicitudes y respuestas, LLVAR/LLLVAR, campos binarios, bitmaps, variantes de perfil, errores, casos especiales de laboratorio y canales Spring. Cada receta prepara datos sintéticos y comprueba el resultado. Los mismos casos se ejecutan automáticamente con `verify`.
 
-La investigación y el diseño para iniciar el desarrollo están en el [índice de documentación](docs/README.md). Incluyen arquitectura Java, evaluación de motores existentes, contrato de perfiles, requisitos ATM generalizados, pruebas, documentos oficiales necesarios y opciones de nombre.
+Después de compilar, puedes listar o ejecutar casos desde un JAR con todas sus dependencias:
 
-El enfoque acordado es un núcleo Java propio, sin dependencias externas de ejecución, configurable mediante perfiles versionados. La licencia objetivo es Apache 2.0. La [evaluación de motor propio frente a j8583](docs/09-evaluacion-motor-propio.md) detalla beneficios, costes y validación necesaria. “Universal” significa extensible mediante perfiles explícitos; no se promete detectar cualquier formato automáticamente.
+```sh
+"$JAVA_HOME/bin/java" -jar trama8583-escenarios/target/trama8583-escenarios-1.0-SNAPSHOT.jar --listar
+"$JAVA_HOME/bin/java" -jar trama8583-escenarios/target/trama8583-escenarios-1.0-SNAPSHOT.jar NUC-01 ERR-04 SPR-01
+```
 
-Los [ejemplos de laboratorio](examples/profiles/lab-ascii-v1.json) y [vectores sintéticos](examples/messages/vectors.json) son material de diseño, no una implementación disponible ni un perfil de producción.
+Usa `--todos` para recorrer el catálogo completo. Cada caso informa su resultado; un fallo produce código de salida `1` para automatizar la validación. El JAR ya construido solo requiere Java 21 o posterior y funciona sin servicios externos.
 
-1. Definir el perfil inicial y la versión mínima de Java.
-2. Diseñar el modelo de mensajes y la API pública.
-3. Implementar codificación, decodificación y validación.
-4. Incorporar pruebas, ejemplos y compilación automática en GitHub Actions.
-5. Publicar una primera versión con sus limitaciones documentadas.
+## Pruebas de estrés
 
-## Contribuciones
+El JAR también permite carga concurrente con calentamiento, seis tipos de carga, conteos de errores y reportes JSON/CSV. Incluye operaciones por segundo, latencia mínima/media/máxima, p50/p95/p99 aproximados, heap y actividad de GC:
 
-Las propuestas deben describir el caso de uso, el perfil de mensajería y el comportamiento esperado. Los ejemplos y pruebas deberán utilizar datos sintéticos; evita incluir números de tarjeta reales, PIN, claves o mensajes de producción.
+```sh
+"$JAVA_HOME/bin/java" -Xms256m -Xmx256m \
+  -jar trama8583-escenarios/target/trama8583-escenarios-1.0-SNAPSHOT.jar \
+  --estres --carga mixta --hilos 4 --calentamiento 2 --segundos 10 \
+  --salida target/estres/mixta-4h.json
+```
+
+Cada push/PR ejecuta una carga breve; el workflow manual `Medir estrés de Trama8583` repite las seis cargas con uno y cuatro hilos y conserva artefactos de medición. Consulta la [guía de estrés](docs/15-pruebas-estres.md) para interpretar métricas y comparar cambios en condiciones equivalentes.
+
+## Perfil y mensaje
+
+```java
+import org.gca.trama8583.nucleo.*;
+
+var perfil = PerfilMensaje.crear("laboratorio-ascii-v1")
+        .campo(DefinicionCampo.fijo(3, TipoDato.NUMERICO_ASCII, 6))
+        .campo(DefinicionCampo.fijo(11, TipoDato.NUMERICO_ASCII, 6))
+        .campo(DefinicionCampo.fijo(41, TipoDato.TEXTO_ASCII, 8))
+        .obligatorios("0200", 3, 11, 41)
+        .construir();
+var solicitud = MensajeIso.crear("0200")
+        .campo(3, "000000").campo(11, "000001").campo(41, "TERM0001")
+        .construir();
+CodecIso codec = new CodecIsoBasico(perfil);
+byte[] trama = codec.codificar(solicitud);
+MensajeIso interpretado = codec.decodificar(trama);
+```
+
+Cada campo debe estar definido en el perfil. El bitmap se genera automáticamente y los campos se escriben por número ascendente. `reemplazarCampo(...)` permite variaciones explícitas, por ejemplo una longitud de terminal de 16 bytes. Una definición duplicada mediante `campo(...)` se rechaza.
+
+## Canales Spring
+
+Importa `ConfiguracionIntegracionIso`, declara un único bean `PerfilMensaje` e inyecta `PasarelaIso`:
+
+```java
+byte[] trama = pasarela.construir(solicitud);
+MensajeIso recibido = pasarela.interpretar(trama);
+```
+
+Los canales `trama8583.codificacion` y `trama8583.decodificacion` aceptan mensajes Spring con payload `MensajeIso` y `byte[]`, respectivamente. La pasarela gestiona la respuesta. Los flujos conservan cabeceras de aplicación y se ejecutan en el hilo del llamador. Consulta la [guía de integración](docs/12-integracion-spring.md) y el [ejemplo ejecutable](trama8583-ejemplo-spring/src/main/java/org/gca/trama8583/ejemplo/AplicacionTrama8583.java).
+
+## Capacidades actuales
+
+- MTI de cuatro dígitos ASCII; bitmap primario y secundario en binario o hexadecimal ASCII en mayúsculas.
+- Campos 2–128: numéricos ASCII, texto ASCII imprimible y bytes opacos.
+- FIJA, LLVAR y LLLVAR con prefijos decimales ASCII y longitudes en bytes.
+- Prefijo constante, cabecera opaca de longitud fija, secundario obligatorio opcional y límite total configurable (4096 bytes por defecto).
+- Campos obligatorios por MTI; errores con código, campo y posición cuando aplica.
+- Mensajes y perfiles inmutables, con copias defensivas; `toString()` omite valores de campos.
+
+El codec rechaza campos desconocidos, codificaciones inválidas, longitudes incompatibles, truncamientos y bytes sobrantes. No agrega relleno ni recupera una trama adivinando límites.
+
+Pendientes: cargador JSON/YAML, BCD, EBCDIC, bitmap terciario, subcampos/TLV, reglas entre campos, TCP, correlación transaccional y PIN/MAC/HSM. El campo 65 solo se representa como dato definido explícitamente en este subconjunto; un protocolo que lo use para anunciar otro bitmap requiere una extensión. Los [JSON de laboratorio](examples/profiles/lab-ascii-v1.json) siguen siendo ejemplos de diseño y no se cargan en ejecución.
+
+## Documentación y contribuciones
+
+El [índice de documentación](docs/README.md) reúne investigación, perfiles, pruebas y decisiones. Los documentos previos también describen capacidades futuras; esta lista y la guía Spring delimitan lo implementado. Documentación, Javadoc, API propia y diagnósticos siguen el [requisito de español para Latinoamérica](docs/11-espanol-latinoamerica.md).
+
+Utiliza datos sintéticos en ejemplos y pruebas. Normas adquiridas, manuales externos y perfiles privados se consultan localmente y permanecen fuera del repositorio, por ejemplo en `local-private/`, que está ignorada por Git.
 
 ## Licencia
 
-Se propone Apache 2.0 para el código y material original publicable; falta formalizarla en LICENSE y revisar los materiales publicables. Las normas adquiridas y manuales externos se consultarán localmente y permanecerán fuera del repositorio. Su ausencia actual no bloquea el desarrollo del núcleo configurable. Véase la [política de licencia y consulta local](docs/06-documentos-y-licencias.md).
+La licencia objetivo es Apache 2.0 para código y material original publicable; falta formalizarla en `LICENSE` antes de publicar una versión. Las fuentes externas conservan sus licencias. Consulta la [política de licencia y consulta local](docs/06-documentos-y-licencias.md).

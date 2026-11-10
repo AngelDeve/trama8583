@@ -16,6 +16,6 @@ La configuración inicial será mediante builder Java. Los cargadores JSON y otr
 
 Un codec acotado con MTI ASCII, bitmap hexadecimal ASCII de 64/128 bits, campos fijos y LLVAR ASCII, sobre configurable y errores con offsets sin datos sensibles. Se validará con vectores sintéticos antes de ampliar encodings y compuestos.
 
-Esta decisión no inicia por sí sola la implementación. Java 21 y Apache 2.0 permanecen como propuestas documentadas; el nombre elegido es Trama8583 y la formalización de la licencia sigue pendiente. Las normas y manuales de consulta se mantendrán fuera del repositorio.
+El primer núcleo ya está implementado con Java 21, bitmap ASCII o binario, FIJA/LLVAR/LLLVAR y los tres vectores de laboratorio. Por solicitud del mantenedor, un módulo separado integra canales y una pasarela con Spring Integration; el núcleo mantiene cero dependencias externas de ejecución. La [guía Spring](12-integracion-spring.md) delimita las capacidades actuales. Apache 2.0 sigue como licencia objetivo pendiente de formalizar. Las normas y manuales de consulta permanecen fuera del repositorio.
 
 La [evaluación comparativa](09-evaluacion-motor-propio.md) conserva las razones y alternativas consideradas; el [plan de implementación](05-plan-y-pruebas.md) establece los criterios de aceptación.

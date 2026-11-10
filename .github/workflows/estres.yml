@@ -1,0 +1,64 @@
+name: Medir estrés de Trama8583
+on:
+  workflow_dispatch:
+    inputs:
+      segundos:
+        description: Segundos de medición por carga y repetición (1 a 1800)
+        required: true
+        default: '10'
+      calentamiento:
+        description: Segundos de calentamiento por proceso (0 a 60)
+        required: true
+        default: '2'
+      repeticiones:
+        description: Procesos independientes por carga (1 a 10)
+        required: true
+        default: '3'
+permissions:
+  contents: read
+jobs:
+  medir:
+    runs-on: ubuntu-latest
+    timeout-minutes: 60
+    strategy:
+      fail-fast: false
+      matrix:
+        hilos: [1, 4]
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: '21'
+          cache: maven
+      - name: Validar duración total solicitada
+        env:
+          ESTRES_SEGUNDOS: ${{ inputs.segundos }}
+          ESTRES_CALENTAMIENTO: ${{ inputs.calentamiento }}
+          ESTRES_REPETICIONES: ${{ inputs.repeticiones }}
+        run: |
+          [[ "$ESTRES_SEGUNDOS" =~ ^[1-9][0-9]{0,3}$ ]] || exit 2
+          [[ "$ESTRES_CALENTAMIENTO" =~ ^(0|[1-9][0-9]?)$ ]] || exit 2
+          [[ "$ESTRES_REPETICIONES" =~ ^([1-9]|10)$ ]] || exit 2
+          (( ESTRES_SEGUNDOS <= 1800 && ESTRES_CALENTAMIENTO <= 60 )) || exit 2
+          (( (ESTRES_SEGUNDOS + ESTRES_CALENTAMIENTO) * ESTRES_REPETICIONES * 6 <= 3000 )) || exit 2
+      - name: Compilar y validar
+        run: ./mvnw --batch-mode --no-transfer-progress -pl trama8583-escenarios -am verify
+      - name: Medir cargas en procesos independientes
+        env:
+          ESTRES_SEGUNDOS: ${{ inputs.segundos }}
+          ESTRES_CALENTAMIENTO: ${{ inputs.calentamiento }}
+          ESTRES_REPETICIONES: ${{ inputs.repeticiones }}
+          ESTRES_HILOS: ${{ matrix.hilos }}
+        run: |
+          python3 scripts/medir-estres.py --java java --hilos "$ESTRES_HILOS" \
+            --segundos "$ESTRES_SEGUNDOS" --calentamiento "$ESTRES_CALENTAMIENTO" \
+            --repeticiones "$ESTRES_REPETICIONES" --salida target/estres
+      - name: Conservar reportes de cada carga y repetición
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: mediciones-estres-${{ matrix.hilos }}-hilos
+          path: target/estres/
+          if-no-files-found: ignore
+          retention-days: 30

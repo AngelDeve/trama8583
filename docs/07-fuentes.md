@@ -22,12 +22,10 @@ Consulta: 9 de octubre de 2026. Las referencias siguientes son primarias: catál
 | [Especificaciones pyiso8583](https://pyiso8583.readthedocs.io/en/latest/specifications.html) | Separación de encoding, longitud, prefijo y relleno | Ejemplos de implementación, no catálogo normativo |
 | [moov-io/iso8583](https://github.com/moov-io/iso8583) | Implementación independiente para comparar vectores | Go; no candidato de runtime para esta biblioteca Java |
 
-## Caso de estudio aportado
+## Ejemplos del proyecto
 
-La guía local de ocho páginas se usó para generalizar necesidades de cabecera, formatos alternativos, compuestos y reglas de relación. Se leyeron las ocho páginas y se revisó visualmente el núcleo técnico de las páginas 3 a 5. Contiene referencias a secciones del manual original que no están incluidas en el archivo.
-
-Su matriz y ejemplos requieren confirmación, en especial los errores señalados en [requisitos ATM](04-requisitos-atm.md). No se verificaron sus reglas operativas con una contraparte, no se copiaron cuestionarios ni catálogos completos, y no se distribuye el archivo fuente. No se atribuye valor normativo a sus afirmaciones sobre ISO.
+Los perfiles, vectores y contenedores de ejemplo son de laboratorio. Las [variaciones de mensajería](04-requisitos-atm.md) describen capacidades genéricas y las responsabilidades de cada capa. Las referencias públicas anteriores orientan el diseño; los ejemplos no acreditan conformidad con una red.
 
 ## Evidencia pendiente
 
-La norma histórica autorizada, el manual vigente, los derechos de publicar perfiles reales y los vectores de contraparte quedan pendientes para objetivos de conformidad o integración específicos. No son bloqueos del núcleo configurable. La recomendación del motor propio es documental: no se descargaron JARs ni se ejecutó un benchmark o prueba de interoperabilidad. Los vectores incluidos son de laboratorio y se verifican aritméticamente; todavía no existe codec Java.
+La norma histórica autorizada, el manual vigente, los derechos de publicar perfiles reales y los vectores de contraparte quedan pendientes para objetivos de conformidad o integración específicos. No son bloqueos del núcleo configurable. El codec implementado verifica vectores sintéticos y dispone de pruebas de carga instrumentada. La comparación con otro motor y la interoperabilidad con una contraparte siguen pendientes; una medición local no acredita conformidad ni rendimiento en otro entorno.

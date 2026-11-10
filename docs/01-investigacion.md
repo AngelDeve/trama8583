@@ -20,7 +20,7 @@ Los ejemplos públicos de bibliotecas ayudan a implementar codecs, pero no susti
 | 1993 y 2003 | Perfiles y reglas separados | Documentos de la edición elegida y pruebas propias |
 | 2023 | Hito posterior; evaluar estructuras y datasets antes de reutilizar el modelo | Norma vigente y definiciones mantenidas aplicables |
 
-La guía aportada declara una base de 1987. No debe reinterpretarse como 2023. Un MTI que señale una edición tampoco garantiza que la contraparte siga todos sus formatos.
+El subconjunto inicial del proyecto usa mensajes de estilo 1987. No debe reinterpretarse como una implementación de la edición 2023. Un MTI que señale una edición tampoco garantiza que la contraparte siga todos sus formatos.
 
 ## Definición de universalidad
 

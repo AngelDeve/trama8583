@@ -5,13 +5,62 @@
     <modelVersion>4.0.0</modelVersion>
 
     <groupId>org.gca</groupId>
-    <artifactId>trama8583-nucleo</artifactId>
+    <artifactId>trama8583</artifactId>
     <version>1.0-SNAPSHOT</version>
+    <packaging>pom</packaging>
+    <name>Trama8583</name>
+    <description>Mensajeria ISO 8583 configurable en Java con integracion Spring.</description>
+
+    <modules>
+        <module>trama8583-nucleo</module>
+        <module>trama8583-spring-integracion</module>
+        <module>trama8583-ejemplo-spring</module>
+        <module>trama8583-escenarios</module>
+    </modules>
 
     <properties>
-        <maven.compiler.source>27</maven.compiler.source>
-        <maven.compiler.target>27</maven.compiler.target>
+        <maven.compiler.release>21</maven.compiler.release>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+        <spring-boot.version>4.1.1</spring-boot.version>
+        <junit.version>6.0.3</junit.version>
     </properties>
 
+    <dependencyManagement>
+        <dependencies>
+            <dependency>
+                <groupId>org.springframework.boot</groupId>
+                <artifactId>spring-boot-dependencies</artifactId>
+                <version>${spring-boot.version}</version>
+                <type>pom</type>
+                <scope>import</scope>
+            </dependency>
+            <dependency>
+                <groupId>org.gca</groupId>
+                <artifactId>trama8583-nucleo</artifactId>
+                <version>${project.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.gca</groupId>
+                <artifactId>trama8583-spring-integracion</artifactId>
+                <version>${project.version}</version>
+            </dependency>
+        </dependencies>
+    </dependencyManagement>
+    <build>
+        <pluginManagement>
+            <plugins>
+                <plugin>
+                    <groupId>org.apache.maven.plugins</groupId>
+                    <artifactId>maven-compiler-plugin</artifactId>
+                    <version>3.14.1</version>
+                    <configuration><parameters>true</parameters></configuration>
+                </plugin>
+                <plugin>
+                    <groupId>org.apache.maven.plugins</groupId>
+                    <artifactId>maven-surefire-plugin</artifactId>
+                    <version>3.5.4</version>
+                </plugin>
+            </plugins>
+        </pluginManagement>
+    </build>
 </project>
